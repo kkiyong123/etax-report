@@ -6,9 +6,10 @@ import lk.gov.ird.etax.report.repository.TaxReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 @Service
 public class TaxReportService {
@@ -39,19 +40,38 @@ public class TaxReportService {
         summary.put("totalFilings", 12);
         summary.put("totalPaid", new BigDecimal("26700.00"));
         summary.put("totalOutstanding", new BigDecimal("16500.00"));
-        summary.put("taxBreakdown", Map.of(
-            "PROPERTY_TAX",  Map.of("filings", 3, "paid", "9600.00", "outstanding", "4500.00"),
-            "STAMP_DUTY",    Map.of("filings", 2, "paid", "4750.00", "outstanding", "450.00"),
-            "LICENSE_TAX",   Map.of("filings", 2, "paid", "3600.00", "outstanding", "0.00"),
-            "TRANSFER_TAX",  Map.of("filings", 1, "paid", "0.00",    "outstanding", "12000.00"),
-            "REGISTRATION",  Map.of("filings", 1, "paid", "8750.00", "outstanding", "0.00")
-        ));
-        summary.put("monthlyPayments", Map.of(
-            "Jan", "1800.00", "Feb", "0.00",   "Mar", "1000.00",
-            "Apr", "0.00",    "May", "0.00",   "Jun", "3750.00",
-            "Jul", "3200.00", "Aug", "0.00",   "Sep", "0.00",
-            "Oct", "0.00",    "Nov", "0.00",   "Dec", "0.00"
-        ));
+
+        Map<String, Object> taxBreakdown = new LinkedHashMap<>();
+        taxBreakdown.put("PROPERTY_TAX", createBreakdown(3, "9600.00", "4500.00"));
+        taxBreakdown.put("STAMP_DUTY",   createBreakdown(2, "4750.00", "450.00"));
+        taxBreakdown.put("LICENSE_TAX",  createBreakdown(2, "3600.00", "0.00"));
+        taxBreakdown.put("TRANSFER_TAX", createBreakdown(1, "0.00",    "12000.00"));
+        taxBreakdown.put("REGISTRATION", createBreakdown(1, "8750.00", "0.00"));
+        summary.put("taxBreakdown", taxBreakdown);
+
+        Map<String, String> monthly = new LinkedHashMap<>();
+        monthly.put("Jan", "1800.00");
+        monthly.put("Feb", "0.00");
+        monthly.put("Mar", "1000.00");
+        monthly.put("Apr", "0.00");
+        monthly.put("May", "0.00");
+        monthly.put("Jun", "3750.00");
+        monthly.put("Jul", "3200.00");
+        monthly.put("Aug", "0.00");
+        monthly.put("Sep", "0.00");
+        monthly.put("Oct", "0.00");
+        monthly.put("Nov", "0.00");
+        monthly.put("Dec", "0.00");
+        summary.put("monthlyPayments", monthly);
+
         return summary;
+    }
+
+    private Map<String, Object> createBreakdown(int filings, String paid, String outstanding) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("filings", filings);
+        map.put("paid", paid);
+        map.put("outstanding", outstanding);
+        return map;
     }
 }
